@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ConverIt.iml" filepath="$PROJECT_DIR$/ConverIt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CSE-CIT-280-ConverIt.iml" filepath="$PROJECT_DIR$/CSE-CIT-280-ConverIt.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
