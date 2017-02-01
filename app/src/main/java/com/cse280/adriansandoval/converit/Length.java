@@ -6,5 +6,5 @@ package com.cse280.adriansandoval.converit;
 
 public class Length {
 
-    int l;
+    int p;
 }
