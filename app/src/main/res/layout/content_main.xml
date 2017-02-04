@@ -13,14 +13,25 @@
     tools:context="com.cse280.adriansandoval.converit.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <Button
-        android:text="Convert"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/button"
-        />
+    <ImageView
+        android:layout_height="57dp"
+        app:srcCompat="@drawable/ruler"
+        android:id="@+id/imageView3"
+        android:layout_width="58dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp" />
+
+    <ImageView
+        android:layout_height="57dp"
+        app:srcCompat="@drawable/beaker"
+        android:id="@+id/imageView6"
+        android:layout_width="58dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imageView4"
+        android:layout_toEndOf="@+id/imageView4" />
 
     <ImageView
         android:layout_width="58dp"
@@ -30,25 +41,17 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-         />
+        android:layout_marginRight="14dp"
+        android:layout_marginEnd="14dp" />
 
     <ImageView
         android:layout_height="57dp"
-        app:srcCompat="@drawable/ruler"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/imageView3"
-        android:layout_width="58dp" />
-
-    <ImageView
-        android:layout_height="57dp"
-        app:srcCompat="@drawable/beaker"
-        android:id="@+id/imageView6"
+        app:srcCompat="@drawable/mass"
+        android:id="@+id/imageView5"
         android:layout_width="58dp"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/button"
-        android:layout_toEndOf="@+id/button" />
+        android:layout_toLeftOf="@+id/imageView4"
+        android:layout_toStartOf="@+id/imageView4" />
 
     <ImageView
         android:layout_width="58dp"
@@ -59,13 +62,51 @@
         android:layout_centerHorizontal="true" />
 
     <ImageView
-        android:layout_height="57dp"
-        app:srcCompat="@drawable/turquoise"
-        android:id="@+id/imageView5"
-        android:layout_width="58dp"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/button"
-        android:layout_toStartOf="@+id/button"
-         />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/convert"
+        android:id="@+id/imageView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_marginBottom="48dp"
+        android:id="@+id/editText"
+        android:hint="Enter Info"
+        android:layout_width="150dp"
+        android:layout_above="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView3"
+        android:layout_toEndOf="@+id/imageView3"
+        android:layout_height="45dp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_marginTop="51dp"
+        android:id="@+id/textView"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/imageView"
+        android:layout_alignLeft="@+id/editText"
+        android:layout_alignStart="@+id/editText" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_sort_by_size"
+        android:layout_alignBottom="@+id/editText"
+        android:layout_alignRight="@+id/imageView6"
+        android:layout_alignEnd="@+id/imageView6"
+        android:id="@+id/imageView9" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_sort_by_size"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_alignRight="@+id/imageView9"
+        android:layout_alignEnd="@+id/imageView9"
+        android:id="@+id/imageView10" />
 
 </RelativeLayout>
