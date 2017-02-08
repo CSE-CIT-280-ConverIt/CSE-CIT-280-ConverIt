@@ -7,6 +7,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -170,6 +173,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void conversion(View view){
 
+        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatCount(Animation.INFINITE);
+        anim.setDuration(700);
+
+// Start animating the image
+        final ImageView spin = (ImageView) findViewById(R.id.convert);
+        spin.startAnimation(anim);
+
+        anim.setRepeatCount(0);
+
+// Later.. stop the animation
+        //spin.setAnimation(null);
 
         if(inUnit == volumeUnits[0].toString() && outUnit== volumeUnits[1].toString()){
             outValue = input.getText().toString();
