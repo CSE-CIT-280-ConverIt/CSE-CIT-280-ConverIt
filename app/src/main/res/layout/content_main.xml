@@ -27,11 +27,12 @@
     <ImageView
         android:layout_height="57dp"
         app:srcCompat="@drawable/beaker"
-        android:id="@+id/imageView6"
+        android:id="@+id/volumeImage"
         android:layout_width="58dp"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/imageView4"
-        android:layout_toEndOf="@+id/imageView4" />
+        android:layout_toEndOf="@+id/imageView4"
+        android:onClick="setVolumeListView"/>
 
     <ImageView
         android:layout_width="58dp"
@@ -62,51 +63,77 @@
         android:layout_centerHorizontal="true" />
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:srcCompat="@drawable/convert"
-        android:id="@+id/imageView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@android:drawable/ic_menu_sort_by_size"
+        android:layout_alignBottom="@+id/outPut"
+        android:layout_alignRight="@+id/showInListView"
+        android:layout_alignEnd="@+id/showInListView"
+        android:id="@+id/showOutListView"
+        android:onClick="openOutListView"/>
+
+    <ListView
+        android:id="@+id/outListView"
+        android:layout_height="300dp"
+        android:layout_width="150dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ListView
+        android:layout_width="150dp"
+        android:id="@+id/inListView"
+        android:layout_height="250dp"
+        android:layout_alignTop="@+id/showInListView"
+        android:layout_toRightOf="@+id/imageView4"
+        android:layout_toEndOf="@+id/imageView4" />
+
+    <TextView
+        android:text="To"
+        android:id="@+id/outPut"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="14dp"
+        android:layout_alignBottom="@+id/inListView"
+        android:layout_alignLeft="@+id/input"
+        android:layout_alignStart="@+id/input"
+        android:textSize="18sp" />
 
     <EditText
         android:inputType="textPersonName"
         android:ems="10"
-        android:layout_marginBottom="48dp"
-        android:id="@+id/editText"
-        android:hint="Enter Info"
+        android:id="@+id/input"
+        android:hint="From"
         android:layout_width="150dp"
-        android:layout_above="@+id/imageView"
-        android:layout_toRightOf="@+id/imageView3"
-        android:layout_toEndOf="@+id/imageView3"
-        android:layout_height="45dp" />
-
-    <TextView
-        android:text="TextView"
-        android:layout_marginTop="51dp"
-        android:id="@+id/textView"
-        android:layout_width="150dp"
-        android:layout_height="35dp"
-        android:layout_below="@+id/imageView"
-        android:layout_alignLeft="@+id/editText"
-        android:layout_alignStart="@+id/editText" />
+        android:layout_height="45dp"
+        android:layout_marginRight="13dp"
+        android:layout_marginEnd="13dp"
+        android:layout_above="@+id/outListView"
+        android:layout_toLeftOf="@+id/outListView"
+        android:layout_toStartOf="@+id/outListView"
+        android:layout_marginBottom="21dp" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_sort_by_size"
-        android:layout_alignBottom="@+id/editText"
-        android:layout_alignRight="@+id/imageView6"
-        android:layout_alignEnd="@+id/imageView6"
-        android:id="@+id/imageView9" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/convert"
+        android:id="@+id/convert"
+        android:layout_marginRight="17dp"
+        android:layout_marginEnd="17dp"
+        android:layout_alignTop="@+id/outListView"
+        android:layout_alignRight="@+id/input"
+        android:layout_alignEnd="@+id/input"
+        android:layout_marginTop="19dp"
+        android:onClick="conversion"/>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         app:srcCompat="@android:drawable/ic_menu_sort_by_size"
-        android:layout_alignBottom="@+id/textView"
-        android:layout_alignRight="@+id/imageView9"
-        android:layout_alignEnd="@+id/imageView9"
-        android:id="@+id/imageView10" />
+        android:id="@+id/showInListView"
+        android:onClick="openInListView"
+        android:layout_alignBottom="@+id/input"
+        android:layout_toRightOf="@+id/input"
+        android:layout_toEndOf="@+id/input" />
 
 </RelativeLayout>
