@@ -34,6 +34,14 @@ public class MainActivity extends AppCompatActivity {
             "MilliLiter"
     };
 
+    // A String array that holds all currencies
+      String [] currencyTypes={"Us Dollar",
+            "Euro",
+            "GB Pound",
+            "Yen",
+            "Canadian Dollar"
+    };
+
     //ImageView
     ImageView VolumeImageView;
     ImageView showInImageView;
@@ -63,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     //option check
     boolean check = false;
+    boolean isCurrency=false;
 
 
     @Override
@@ -73,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         check = false;
-
+        isCurrency=false;
         //register contents
         VolumeImageView = (ImageView) findViewById(R.id.volumeImage);
         showInImageView= (ImageView) findViewById(R.id.showInListView);
@@ -153,6 +162,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         setListView(volumeUnits);
+
+    }
+
+
+    // OnClick Listener for currency image button
+
+    public void setCurrencyListView(View view){
+
+        isCurrency = true;
+
+
+        setListView(currencyTypes);
 
     }
 
