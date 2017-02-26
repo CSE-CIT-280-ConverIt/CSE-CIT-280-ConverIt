@@ -1,6 +1,7 @@
 package com.cse280.adriansandoval.converit;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,15 +18,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.jsoup.*;
+import org.jsoup.nodes.*;
 
 public class MainActivity extends AppCompatActivity {
 
     //Volume
     Volume volume = new Volume();
-
+    Currency currency= new Currency();
     String[] volumeUnits = new String[]{
             "Cubic Feet",
             "Cubic Meter",
@@ -39,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             "Euro",
             "GB Pound",
             "Yen",
-            "Canadian Dollar"
+
     };
 
     //ImageView
@@ -101,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         outListView.setVisibility(View.INVISIBLE);
 
 
+           // create an instance of the parsing class
+         new parseRates().execute();
     }
 
 
@@ -229,6 +235,34 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+// A method that will extract the rates from the webpage
 
 
+public class parseRates extends AsyncTask<Void,Void,Void>{
+    String eurTousd;
+    String getRate;
+
+    @Override
+    protected Void doInBackground(Void... params) {
+        Document doc = null;
+
+        try {
+            doc = Jsoup.connect("http://webrates.truefx.com/rates/connect.html?f=html").get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        getRate = doc.text();
+         eurTousd = getRate.substring(22, 26);
+
+
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+currency.eurTousd=Double.parseDouble(eurTousd);
+
+    }
+}
 }
