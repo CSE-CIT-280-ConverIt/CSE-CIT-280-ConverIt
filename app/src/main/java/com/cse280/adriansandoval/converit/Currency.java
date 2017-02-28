@@ -7,13 +7,13 @@ package com.cse280.adriansandoval.converit;
 public class Currency {
     // A string array that stores currency types to be loaded to the listview
 
-double usdToJpy;
-double usdToGbp;
-    double eurTousd;
-double eurToGbp;
-double eurToJpy;
-double gbpToJpy;
-double result;
+    double usdToJpy;
+    double gbpToUsd;
+    double eurToUsd;
+    double eurToGbp;
+    double eurToJpy;
+    double gbpToJpy;
+    double result;
     // us dollar to Euro
     public double usDollarToEur(double us){
 

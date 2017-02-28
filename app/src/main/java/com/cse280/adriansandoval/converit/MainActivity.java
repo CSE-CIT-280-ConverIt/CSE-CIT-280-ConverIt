@@ -1,6 +1,7 @@
 package com.cse280.adriansandoval.converit;
 
 import android.content.Intent;
+import android.icu.util.Output;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -239,8 +240,13 @@ public class MainActivity extends AppCompatActivity {
 
 
 public class parseRates extends AsyncTask<Void,Void,Void>{
-    String eurTousd;
     String getRate;
+    String eurToUSD;
+    String gbpToUSD;
+    String eurToGBP;
+    String eurToJPY;
+    String usdToJPY;
+    String gbpToJPY;
 
     @Override
     protected Void doInBackground(Void... params) {
@@ -252,8 +258,25 @@ public class parseRates extends AsyncTask<Void,Void,Void>{
             e.printStackTrace();
         }
         getRate = doc.text();
-         eurTousd = getRate.substring(22, 26);
+// sends the value to a method to check if it contains spaces and removes spaces if they exist
+        usdToJPY = getRate.substring(95, 102);
+        usdToJPY=removeSpaces(usdToJPY);
 
+         eurToUSD = getRate.substring(22, 26);
+        eurToUSD =removeSpaces(eurToUSD );
+
+        gbpToUSD = getRate.substring(150, 154);
+        gbpToUSD=removeSpaces(gbpToUSD);
+
+        eurToGBP=getRate.substring(214, 218);
+        eurToGBP=removeSpaces(eurToGBP);
+
+        eurToJPY = getRate.substring(342,350);
+        eurToJPY=removeSpaces(eurToJPY);
+
+
+        gbpToJPY= getRate.substring(598,606);
+        gbpToJPY=removeSpaces(gbpToJPY);
 
         return null;
     }
@@ -261,8 +284,27 @@ public class parseRates extends AsyncTask<Void,Void,Void>{
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-currency.eurTousd=Double.parseDouble(eurTousd);
+currency.eurToUsd=Double.parseDouble(eurToUSD);
+currency.gbpToUsd=Double.parseDouble(gbpToUSD);
+currency.eurToGbp=Double.parseDouble(eurToGBP);
+currency.eurToJpy=Double.parseDouble(eurToJPY);
+currency.usdToJpy=Double.parseDouble(usdToJPY);
+currency.gbpToJpy=Double.parseDouble(gbpToJPY);
 
+
+    }
+
+    // A method that removes spaces from numbers
+    public  String removeSpaces(String s){
+        String concat="";
+        for (int i = 0; i <= s.length()-1 ; i++) {
+            if (s.charAt(i) != ' ') {
+                concat = concat + s.charAt(i);
+            }
+
+        }
+
+        return concat;
     }
 }
 }
