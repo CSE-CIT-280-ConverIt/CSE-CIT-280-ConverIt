@@ -103,7 +103,7 @@
         android:textSize="18sp" />
 
     <EditText
-        android:inputType="textPersonName"
+
         android:ems="10"
         android:id="@+id/input"
         android:hint="From"
@@ -111,6 +111,7 @@
         android:layout_height="45dp"
         android:layout_marginRight="13dp"
         android:layout_marginEnd="13dp"
+        android:inputType="number"
         android:layout_above="@+id/outListView"
         android:layout_toLeftOf="@+id/outListView"
         android:layout_toStartOf="@+id/outListView"
@@ -138,5 +139,7 @@
         android:layout_alignBottom="@+id/input"
         android:layout_toRightOf="@+id/input"
         android:layout_toEndOf="@+id/input" />
+
+
 
 </RelativeLayout>
