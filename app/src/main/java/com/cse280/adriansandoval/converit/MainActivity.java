@@ -26,7 +26,15 @@ import java.util.List;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
+
+    static boolean isCurrency=false;
+    boolean isLength=false;
+    boolean isMass=false;
+    boolean isTemperature=false;
+    boolean isVolume=false;
+
+
 
     //Volume
     Volume volume = new Volume();
@@ -75,8 +83,9 @@ public class MainActivity extends AppCompatActivity {
     public String outValue;
 
     //option check
-    boolean check = false;
-    boolean isCurrency=false;
+
+
+
 
 
     @Override
@@ -86,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        check = false;
-        isCurrency=false;
+
+
         //register contents
         VolumeImageView = (ImageView) findViewById(R.id.volumeImage);
         showInImageView= (ImageView) findViewById(R.id.showInListView);
@@ -165,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setVolumeListView(View view){
 
-        check = true;
+
 
 
         setListView(volumeUnits);
@@ -177,8 +186,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void setCurrencyListView(View view){
 
-        isCurrency = true;
 
+
+
+
+        isCurrency = true;
+        boolean isLength=false;
+        boolean isMass=false;
+        boolean isTemperature=false;
+        boolean isVolume=false;
+        currencyConversion();
 
         setListView(currencyTypes);
 
@@ -230,12 +247,298 @@ public class MainActivity extends AppCompatActivity {
             output.setText(outValue);
 
         }
-        else{
 
+
+
+
+
+        // CURRENCY CONVERSION IF STATEMENTS
+
+        // CHECK FOR NULL VALUES
+
+        try {
+
+
+            // USD TO EURO
+            if (inUnit == currencyTypes[0].toString() && outUnit == currencyTypes[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.usDollarToEur(inValue);
+
+
+                outValue = String.format("\u20ac%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+            // USD TO GBPOUND
+
+            if (inUnit == currencyTypes[0].toString() && outUnit == currencyTypes[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.usDollarToGbpound(inValue);
+
+
+                outValue = String.format("\u00a3%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+            // USD TO YEN
+
+            if (inUnit == currencyTypes[0].toString() && outUnit == currencyTypes[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.usDollarToJPYen(inValue);
+
+
+                outValue = String.format("\u00A5%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+            if (inUnit == currencyTypes[0].toString() && outUnit == currencyTypes[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+
+                outValue = String.format("\u0024" +
+                        "%.2f", inValue);
+
+
+                output.setText(outValue);
+
+            }
+
+
+            // EURO TO US DOLLAR
+
+
+            if (inUnit == currencyTypes[1].toString() && outUnit == currencyTypes[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.euroTousDollar(inValue);
+
+
+                outValue = String.format("\u0024%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+            // EURO TO EURO
+            if (inUnit == currencyTypes[1].toString() && outUnit == currencyTypes[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+
+                outValue = String.format("\u20ac" +
+                        "%.2f", inValue);
+
+
+                output.setText(outValue);
+
+            }
+
+            // EURO TO GB POUND
+            if (inUnit == currencyTypes[1].toString() && outUnit == currencyTypes[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.euroToGbPound(inValue);
+
+
+                outValue = String.format("\u00A3%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+
+            // EURO TO YEN
+
+            if (inUnit == currencyTypes[1].toString() && outUnit == currencyTypes[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.euroTouJPYen(inValue);
+
+
+                outValue = String.format("\u00a5%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+
+            // GB POUND TO USD DOLLAR
+
+
+            if (inUnit == currencyTypes[2].toString() && outUnit == currencyTypes[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.gbpTousDollar(inValue);
+
+
+                outValue = String.format("\u0024%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+            // GB POUND TO EURO
+
+
+            if (inUnit == currencyTypes[2].toString() && outUnit == currencyTypes[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.gbpTousEuro(inValue);
+
+
+                outValue = String.format("\u20ac%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+// GBP TO GBP
+
+
+            if (inUnit == currencyTypes[2].toString() && outUnit == currencyTypes[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+
+                outValue = String.format("\u00A3" +
+                        "%.2f", inValue);
+
+
+                output.setText(outValue);
+
+            }
+// GBP TO YEN
+
+
+            if (inUnit == currencyTypes[2].toString() && outUnit == currencyTypes[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.gbpToYen(inValue);
+
+
+                outValue = String.format("\u00a5%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+
+            // YEN TO USD DOLLAR
+            if (inUnit == currencyTypes[3].toString() && outUnit == currencyTypes[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.JPYentousDollar(inValue);
+
+
+                outValue = String.format("\u0024%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+            // JPY TO EURO
+
+            if (inUnit == currencyTypes[3].toString() && outUnit == currencyTypes[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.JPYenntoEuro(inValue);
+
+
+                outValue = String.format("\u20ac%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+
+            //YEN TO GB POUND
+            if (inUnit == currencyTypes[3].toString() && outUnit == currencyTypes[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                currency.JPYenntoGBPound(inValue);
+
+
+                outValue = String.format("\u00a3%.2f", currency.result);
+
+
+                output.setText(outValue);
+
+            }
+
+
+            // YEN TO YEN
+
+
+            if (inUnit == currencyTypes[3].toString() && outUnit == currencyTypes[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+
+                outValue = String.format("\u00A5%.2f", inValue);
+
+
+                output.setText(outValue);
+
+            }
+
+
+        }
+        catch (Exception e){
+            output.setText("Enter Input Value");
         }
 
 
+
     }
+
+
+
 // A method that will extract the rates from the webpage
 
 
@@ -306,5 +609,21 @@ currency.gbpToJpy=Double.parseDouble(gbpToJPY);
 
         return concat;
     }
+
 }
+
+
+
+
+
+
+    public void currencyConversion(){
+
+
+
+
+    }
+
+
+
 }
