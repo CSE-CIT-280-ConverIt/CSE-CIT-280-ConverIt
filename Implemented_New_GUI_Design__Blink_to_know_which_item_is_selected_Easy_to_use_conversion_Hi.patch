@@ -1,0 +1,961 @@
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(date 1486598523000)
++++ .idea/gradle.xml	(date 1489114337000)
+@@ -5,7 +5,7 @@
+       <GradleProjectSettings>
+         <option name="distributionType" value="LOCAL" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+-        <option name="gradleHome" value="F:\Android Studio\gradle\gradle-2.14.1" />
++        <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-2.14.1" />
+         <option name="modules">
+           <set>
+             <option value="$PROJECT_DIR$" />
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(date 1486598523000)
++++ .idea/misc.xml	(date 1489114337000)
+@@ -37,7 +37,7 @@
+     <ConfirmationsSetting value="0" id="Add" />
+     <ConfirmationsSetting value="0" id="Remove" />
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+\ No newline at end of file
+Index: app/src/main/java/com/cse280/adriansandoval/converit/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/cse280/adriansandoval/converit/MainActivity.java	(date 1486598523000)
++++ app/src/main/java/com/cse280/adriansandoval/converit/MainActivity.java	(date 1489114337000)
+@@ -1,12 +1,17 @@
+ package com.cse280.adriansandoval.converit;
+ 
+ import android.content.Intent;
++import android.graphics.Color;
++import android.net.Uri;
+ import android.os.Bundle;
++import android.os.Handler;
+ import android.support.design.widget.FloatingActionButton;
+ import android.support.design.widget.Snackbar;
+ import android.support.v7.app.AppCompatActivity;
+ import android.support.v7.widget.Toolbar;
++import android.text.TextUtils;
+ import android.view.View;
++import android.view.animation.AlphaAnimation;
+ import android.view.animation.Animation;
+ import android.view.animation.LinearInterpolator;
+ import android.view.animation.RotateAnimation;
+@@ -16,11 +21,20 @@
+ import android.widget.ImageView;
+ import android.widget.ListView;
+ import android.widget.TextView;
++import android.widget.Toast;
+ 
++import com.google.android.gms.appindexing.Action;
++import com.google.android.gms.appindexing.AppIndex;
++import com.google.android.gms.appindexing.Thing;
++import com.google.android.gms.common.api.GoogleApiClient;
++
++import org.w3c.dom.Text;
++
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
+ 
++
+ public class MainActivity extends AppCompatActivity {
+ 
+     //Volume
+@@ -35,7 +49,7 @@
+     };
+ 
+     // A String array that holds all currencies
+-      String [] currencyTypes={"Us Dollar",
++    String[] currencyTypes = {"Us Dollar",
+             "Euro",
+             "GB Pound",
+             "Yen",
+@@ -49,7 +63,6 @@
+     ImageView convert;
+ 
+ 
+-
+     //List View
+     ListView inListView;
+     ListView outListView;
+@@ -65,13 +78,24 @@
+     //TextView
+     TextView output;
+ 
++    //extra
++    TextView len;
++    TextView mass;
++    TextView temp;
++    TextView vol;
++    TextView cur;
++
+     //conversion variables
+     public double inValue;
+     public String outValue;
+ 
+     //option check
+-    boolean check = false;
++    boolean isVolume = false;
+-    boolean isCurrency=false;
++    boolean isCurrency = false;
++    boolean isLength = false;
++    boolean isMass = false;
++    boolean isTemperature = false;
++    boolean isBlinking = false;
+ 
+ 
+     @Override
+@@ -81,12 +105,10 @@
+         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+         setSupportActionBar(toolbar);
+ 
+-        check = false;
+-        isCurrency=false;
+         //register contents
+         VolumeImageView = (ImageView) findViewById(R.id.volumeImage);
+-        showInImageView= (ImageView) findViewById(R.id.showInListView);
+-        showOutImageView= (ImageView) findViewById(R.id.showOutListView);
++        // showInImageView= (ImageView) findViewById(R.id.showInListView);
++        //showOutImageView= (ImageView) findViewById(R.id.showOutListView);
+         convert = (ImageView) findViewById(R.id.convert);
+ 
+         inListView = (ListView) findViewById(R.id.inListView);
+@@ -96,70 +118,118 @@
+ 
+         output = (TextView) findViewById(R.id.outPut);
+ 
++        len = (TextView) findViewById(R.id.len);
++        mass = (TextView) findViewById(R.id.mass);
++        temp = (TextView) findViewById(R.id.temp);
++        vol = (TextView) findViewById(R.id.vol);
++        cur = (TextView) findViewById(R.id.cur);
+ 
+-        inListView.setVisibility(View.INVISIBLE);
+-        outListView.setVisibility(View.INVISIBLE);
++        inListView.setVisibility(View.VISIBLE);
++        outListView.setVisibility(View.VISIBLE);
++        len.setVisibility(View.INVISIBLE);
++        mass.setVisibility(View.INVISIBLE);
++        temp.setVisibility(View.INVISIBLE);
++        vol.setVisibility(View.INVISIBLE);
++        cur.setVisibility(View.INVISIBLE);
+ 
+-
+     }
+ 
+ 
+-    private void setListView(String[] inString){
++    private void setListView(String[] inString) {
+ 
+-        String [] string;
++        String[] string;
+         string = inString;
+ 
+         //creates a list from string elements
+         final List<String> Units = new ArrayList<String>(Arrays.asList(string));
+ 
+         //creates and array adapter from list
+-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Units);
++        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Units);
+ 
+         //sets adapter
+         inListView.setAdapter(arrayAdapter);
+         outListView.setAdapter(arrayAdapter);
+ 
+         //input option handler
+-        inListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
++        inListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+             @Override
+-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
++            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                 String selectedFromList = (inListView.getItemAtPosition(position).toString());
+ 
+                 inUnit = selectedFromList;
+ 
+-                inListView.setVisibility(View.INVISIBLE);
+-                showInImageView.setVisibility(View.VISIBLE);
+-                showOutImageView.setVisibility(View.VISIBLE);
++                //inListView.setVisibility(View.INVISIBLE);
++                // showInImageView.setVisibility(View.VISIBLE);
++                // showOutImageView.setVisibility(View.VISIBLE);
+ 
+             }
+         });
+ 
+         //output option handler
+-        outListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
++        outListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+             @Override
+-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
++            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+ 
+                 String selectedFromList = (outListView.getItemAtPosition(position).toString());
+ 
+                 outUnit = selectedFromList;
+ 
+-                outListView.setVisibility(View.INVISIBLE);
+-                showInImageView.setVisibility(View.VISIBLE);
+-                showOutImageView.setVisibility(View.VISIBLE);
++                //outListView.setVisibility(View.INVISIBLE);
++                //showInImageView.setVisibility(View.VISIBLE);
++                //showOutImageView.setVisibility(View.VISIBLE);
+             }
+ 
+ 
+         });
+ 
+ 
++    }
+ 
++    private void blink(TextView itv) {
++        final TextView tv = itv;
++        Animation anim = new AlphaAnimation(0.0f, 1.0f);
++        anim.setDuration(500); //You can manage the blinking time with this parameter
++        anim.setStartOffset(20);
++        anim.setRepeatMode(Animation.REVERSE);
++        anim.setRepeatCount(Animation.INFINITE);
++        tv.startAnimation(anim);
++
++        /*if (isBlinking) {
++            tv.startAnimation(anim);
++            isBlinking = true;
++        } else {
++            tv.clearAnimation(); // cancel blink animation
++            tv.setAlpha(1.0f); // restore original alpha
++            isBlinking = false;
++        }*/
++
+     }
++    private void noBlink(TextView itv){
++        final TextView tv = itv;
++        tv.clearAnimation();
+ 
++    }
+ 
+-    public void setVolumeListView(View view){
++    public void setVolumeListView(View view) {
+ 
+-        check = true;
++        isVolume = true;
++        isCurrency = false;
++        isLength = false;
++        isMass = false;
++        isTemperature = false;
++        vol.setVisibility(View.VISIBLE);
++        if(isVolume==true){
++            blink(vol);
++            noBlink(cur);
++            noBlink(len);
++            noBlink(mass);
++            noBlink(temp);
++        }else noBlink(vol);
+ 
++        len.setVisibility(View.INVISIBLE);
++        mass.setVisibility(View.INVISIBLE);
++        temp.setVisibility(View.INVISIBLE);
++        cur.setVisibility(View.INVISIBLE);
+ 
+         setListView(volumeUnits);
+ 
+@@ -168,67 +238,392 @@
+ 
+     // OnClick Listener for currency image button
+ 
+-    public void setCurrencyListView(View view){
++    public void setCurrencyListView(View view) {
+-
+         isCurrency = true;
++        if(isCurrency == true){
++            blink(cur);
++            noBlink(vol);
++        }
+ 
++        isVolume = false;
++        isLength = false;
++        isMass = false;
++        isTemperature = false;
+ 
++        cur.setVisibility(View.VISIBLE);
++        len.setVisibility(View.INVISIBLE);
++        mass.setVisibility(View.INVISIBLE);
++        temp.setVisibility(View.INVISIBLE);
++        vol.setVisibility(View.INVISIBLE);
+         setListView(currencyTypes);
+-
+     }
+ 
+-    public void openInListView(View view){
++    public void openInListView(View view) {
+ 
+         inListView.setVisibility(View.VISIBLE);
+-        showInImageView.setVisibility(View.INVISIBLE);
+-        showOutImageView.setVisibility(View.INVISIBLE);
++        // showInImageView.setVisibility(View.VISIBLE);
++        // showOutImageView.setVisibility(View.VISIBLE);
+     }
+ 
+-    public void openOutListView(View view){
++    public void openOutListView(View view) {
+ 
+         outListView.setVisibility(View.VISIBLE);
+-        showInImageView.setVisibility(View.INVISIBLE);
+-        showOutImageView.setVisibility(View.INVISIBLE);
++        //showInImageView.setVisibility(View.VISIBLE);
++        // showOutImageView.setVisibility(View.VISIBLE);
+     }
+ 
++    public boolean noSelection() {
++        if (isVolume == false && isCurrency == false && isLength == false && isMass == false && isTemperature == false)
++            return true;
+ 
++        else return false;
++
++    }
++
+-    public void conversion(View view){
++    public void conversion(View view) {
+ 
++        boolean digitsOnly = TextUtils.isDigitsOnly(input.getText());
++
++        if (noSelection()) {
++            Toast.makeText(this, "Choose Conversion Type", Toast.LENGTH_SHORT).show();
++            return;
++        } else if (digitsOnly) {
++
+-        RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+-        anim.setInterpolator(new LinearInterpolator());
+-        anim.setRepeatCount(Animation.INFINITE);
+-        anim.setDuration(700);
++            RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
++            anim.setInterpolator(new LinearInterpolator());
++            anim.setRepeatCount(Animation.INFINITE);
++            anim.setDuration(700);
+ 
+ // Start animating the image
+-        final ImageView spin = (ImageView) findViewById(R.id.convert);
+-        spin.startAnimation(anim);
++            final ImageView spin = (ImageView) findViewById(R.id.convert);
++            spin.startAnimation(anim);
+ 
+-        anim.setRepeatCount(0);
++            anim.setRepeatCount(0);
+ 
+ // Later.. stop the animation
+-        //spin.setAnimation(null);
++            //spin.setAnimation(null);
+ 
+-        if(inUnit == volumeUnits[0].toString() && outUnit== volumeUnits[1].toString()){
++            if (isVolume == true) {
++                //isCurrency = false;
++                //isLength = false;
++                ///isMass = false;
++                //isTemperature = false;
++                VolumeConvert();
++            }
++
++
++        } else if (!digitsOnly) {
++            Toast.makeText(this, "YOU MUST ENTER DIGITS ONLY!", Toast.LENGTH_SHORT).show();
++            return;
++
++        }
++
++
++    }
++
++
++    private void VolumeConvert() {
++        boolean digitsOnly = TextUtils.isDigitsOnly(input.getText());
++
++        try {
++            if (inUnit == volumeUnits[0].toString() && outUnit == volumeUnits[0].toString()) {
++                if (input.getText().toString().matches("")) {
++
++                    Toast.makeText(this, "Enter Value To Convert", Toast.LENGTH_SHORT).show();
++                    return;
++                } else output.setText(input.getText().toString() + " ft\u00B3");
++
++            } else if (inUnit == volumeUnits[0].toString() && outUnit == volumeUnits[1].toString()) {
+-            outValue = input.getText().toString();
++                outValue = input.getText().toString();
+ 
+-            inValue = Double.parseDouble(outValue);
++                inValue = Double.parseDouble(outValue);
+ 
+-            volume.cfTocm(inValue);
++                volume.cfTocm(inValue);
+ 
+-            inValue = volume.cm;
++                inValue = volume.cm;
+ 
+-            outValue = String.format("%.5f m\u00B3", inValue);
++                outValue = String.format("%.3f m\u00B3", inValue);
+ 
+ 
+-            output.setText(outValue);
++                output.setText(outValue);
+ 
++            } else if (inUnit == volumeUnits[0].toString() && outUnit == volumeUnits[2].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.cfToli(inValue);
++
++                inValue = volume.li;
++
++                outValue = String.format("%.3f Li", inValue);
++                output.setText(outValue);
++
++            } else if (inUnit == volumeUnits[0].toString() && outUnit == volumeUnits[3].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.cfTogal(inValue);
++
++                inValue = volume.gal;
++
++                outValue = String.format("%.3f gal", inValue);
++                output.setText(outValue);
++
++            } else if (inUnit == volumeUnits[0].toString() && outUnit == volumeUnits[4].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.cfTomili(inValue);
++
++                inValue = volume.mili;
++
++                outValue = String.format("%.3f mL", inValue);
++                output.setText(outValue);
++
++            } else if (inUnit == volumeUnits[1].toString() && outUnit == volumeUnits[0].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.cmTocf(inValue);
++
++                inValue = volume.cf;
++
++                outValue = String.format("%.3f ft\u00B3", inValue);
++                output.setText(outValue);
++
++
++            } else if (inUnit == volumeUnits[1].toString() && outUnit == volumeUnits[1].toString()) {
++                if (input.getText().toString().matches("")) {
++
++                    Toast.makeText(this, "Enter Value To Convert", Toast.LENGTH_SHORT).show();
++                    return;
++                } else output.setText(input.getText().toString() + " m\u00B3");
++            } else if (inUnit == volumeUnits[1].toString() && outUnit == volumeUnits[2].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.cmToli(inValue);
++
++                inValue = volume.li;
++
++                outValue = String.format("%.3f li", inValue);
++                output.setText(outValue);
++
++            } else if (inUnit == volumeUnits[1].toString() && outUnit == volumeUnits[3].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.cmTogal(inValue);
++
++                inValue = volume.gal;
++
++                outValue = String.format("%.3f gal", inValue);
++                output.setText(outValue);
++
++
++            } else if (inUnit == volumeUnits[1].toString() && outUnit == volumeUnits[4].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.cmTomili(inValue);
++
++                inValue = volume.mili;
++
++                outValue = String.format("%.3f mL", inValue);
++                output.setText(outValue);
++
++
++            } else if (inUnit == volumeUnits[2].toString() && outUnit == volumeUnits[0].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.liTocf(inValue);
++
++                inValue = volume.cf;
++
++                outValue = String.format("%.3f ft\u00B3", inValue);
++                output.setText(outValue);
++
++
++            } else if (inUnit == volumeUnits[2].toString() && outUnit == volumeUnits[1].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.liTocm(inValue);
++
++                inValue = volume.cm;
++
++                outValue = String.format("%.3f m\u00B3", inValue);
++                output.setText(outValue);
++            } else if (inUnit == volumeUnits[2].toString() && outUnit == volumeUnits[2].toString()) {
++                if (input.getText().toString().matches("")) {
++
++                    Toast.makeText(this, "Enter Value To Convert", Toast.LENGTH_SHORT).show();
++                    return;
++                } else output.setText(input.getText().toString() + " li");
++            } else if (inUnit == volumeUnits[2].toString() && outUnit == volumeUnits[3].toString()) {
++                outValue = input.getText().toString();
++
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.liTogal(inValue);
++
++                inValue = volume.gal;
++
++                outValue = String.format("%.3f gal", inValue);
++                output.setText(outValue);
++
++            } else if (inUnit == volumeUnits[2].toString() && outUnit == volumeUnits[4].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.liTomili(inValue);
++
++                inValue = volume.mili;
++
++                outValue = String.format("%.3f mL", inValue);
++                output.setText(outValue);
++            } else if (inUnit == volumeUnits[3].toString() && outUnit == volumeUnits[0].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.galTocf(inValue);
++
++                inValue = volume.cf;
++
++                outValue = String.format("%.3f ft\u00B3", inValue);
++                output.setText(outValue);
++
++            } else if (inUnit == volumeUnits[3].toString() && outUnit == volumeUnits[1].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.galTocm(inValue);
++
++                inValue = volume.cm;
++
++                outValue = String.format("%.3f m\u00B3", inValue);
++                output.setText(outValue);
++            } else if (inUnit == volumeUnits[3].toString() && outUnit == volumeUnits[2].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.galToli(inValue);
++
++                inValue = volume.li;
++
++                outValue = String.format("%.3f li", inValue);
++                output.setText(outValue);
++
++            } else if (inUnit == volumeUnits[3].toString() && outUnit == volumeUnits[3].toString()) {
++                if (input.getText().toString().matches("")) {
++
++                    Toast.makeText(this, "Enter Value To Convert", Toast.LENGTH_SHORT).show();
++                    return;
++                } else output.setText(input.getText().toString() + " gal");
++            } else if (inUnit == volumeUnits[3].toString() && outUnit == volumeUnits[4].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.galTomili(inValue);
++
++                inValue = volume.mili;
++
++                outValue = String.format("%.3f mL", inValue);
++                output.setText(outValue);
++            } else if (inUnit == volumeUnits[4].toString() && outUnit == volumeUnits[0].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.miliTocf(inValue);
++
++                inValue = volume.cf;
++
++                outValue = String.format("%.3f ft\u00B3", inValue);
++                output.setText(outValue);
++            } else if (inUnit == volumeUnits[4].toString() && outUnit == volumeUnits[1].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++                volume.miliTocm(inValue);
++
++                inValue = volume.cm;
++
++                outValue = String.format("%.3f m\u00B3", inValue);
++                output.setText(outValue);
++            } else if (inUnit == volumeUnits[4].toString() && outUnit == volumeUnits[2].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++                volume.miliToli(inValue);
++
++                inValue = volume.li;
++
++                outValue = String.format("%.3f li", inValue);
++                output.setText(outValue);
++
++            } else if (inUnit == volumeUnits[4].toString() && outUnit == volumeUnits[3].toString()) {
++                outValue = input.getText().toString();
++
++                inValue = Double.parseDouble(outValue);
++
++
++                volume.miliTogal(inValue);
++
++                inValue = volume.gal;
++
++                outValue = String.format("%.3f gal", inValue);
++                output.setText(outValue);
++            } else if (inUnit == volumeUnits[4].toString() && outUnit == volumeUnits[4].toString()) {
++                if (input.getText().toString().matches("")) {
++
++                    Toast.makeText(this, "Enter Value To Convert", Toast.LENGTH_SHORT).show();
++                    return;
+-        }
++                }
+-        else{
+ 
++                output.setText(input.getText().toString() + " mL");
++            } else if (inUnit == null) {
++                Toast.makeText(this, "Choose \"From\" Conversion", Toast.LENGTH_SHORT).show();
++                return;
++            } else if (outUnit == null) {
++                Toast.makeText(this, "Choose \"To\" Conversion", Toast.LENGTH_SHORT).show();
++                return;
++
++            } else {
++                Toast.makeText(this, "Choose A Unit Of Conversion", Toast.LENGTH_SHORT).show();
++                return;
++
+-        }
++            }
+ 
++        } catch (NumberFormatException ex) {
+ 
++            Toast.makeText(this, "Please enter a value to convert", Toast.LENGTH_SHORT).show();
++            return;
++
++
+-    }
++        }
++
++
++    }
++
++
+ 
+ 
+ }
+Index: app/src/main/res/drawable/selec.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/selec.xml	(date 1489114337000)
++++ app/src/main/res/drawable/selec.xml	(date 1489114337000)
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<selector xmlns:android="http://schemas.android.com/apk/res/android">
++
++    <TextView
++
++        android:textSize="18sp"
++        android:background="@color/colorAccent"
++        android:layout_width="58dp"
++        android:layout_alignBottom="@+id/vol"
++        android:layout_alignLeft="@+id/imageView2"
++        android:layout_alignStart="@+id/imageView2"
++        android:layout_height="5dp" />
++
++</selector>
+\ No newline at end of file
+Index: app/src/main/res/layout/content_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/content_main.xml	(date 1486598523000)
++++ app/src/main/res/layout/content_main.xml	(date 1489114337000)
+@@ -45,6 +45,7 @@
+         android:layout_marginRight="14dp"
+         android:layout_marginEnd="14dp"
+         android:onClick="setCurrencyListView"
++        android:background="@drawable/selec"
+         />
+ 
+ 
+@@ -65,43 +66,6 @@
+         android:layout_alignParentTop="true"
+         android:layout_centerHorizontal="true" />
+ 
+-    <ImageView
+-        android:layout_width="40dp"
+-        android:layout_height="40dp"
+-        app:srcCompat="@android:drawable/ic_menu_sort_by_size"
+-        android:layout_alignBottom="@+id/outPut"
+-        android:layout_alignRight="@+id/showInListView"
+-        android:layout_alignEnd="@+id/showInListView"
+-        android:id="@+id/showOutListView"
+-        android:onClick="openOutListView"/>
+-
+-    <ListView
+-        android:id="@+id/outListView"
+-        android:layout_height="300dp"
+-        android:layout_width="150dp"
+-        android:layout_alignParentBottom="true"
+-        android:layout_alignParentRight="true"
+-        android:layout_alignParentEnd="true" />
+-
+-    <ListView
+-        android:layout_width="150dp"
+-        android:id="@+id/inListView"
+-        android:layout_height="250dp"
+-        android:layout_alignTop="@+id/showInListView"
+-        android:layout_toRightOf="@+id/imageView4"
+-        android:layout_toEndOf="@+id/imageView4" />
+-
+-    <TextView
+-        android:text="To"
+-        android:id="@+id/outPut"
+-        android:layout_width="150dp"
+-        android:layout_height="35dp"
+-        android:layout_marginBottom="14dp"
+-        android:layout_alignBottom="@+id/inListView"
+-        android:layout_alignLeft="@+id/input"
+-        android:layout_alignStart="@+id/input"
+-        android:textSize="18sp" />
+-
+     <EditText
+         android:inputType="textPersonName"
+         android:ems="10"
+@@ -109,34 +73,108 @@
+         android:hint="From"
+         android:layout_width="150dp"
+         android:layout_height="45dp"
+-        android:layout_marginRight="13dp"
+-        android:layout_marginEnd="13dp"
+-        android:layout_above="@+id/outListView"
+-        android:layout_toLeftOf="@+id/outListView"
+-        android:layout_toStartOf="@+id/outListView"
+-        android:layout_marginBottom="21dp" />
++        android:layout_below="@+id/imageView3"
++        android:layout_alignLeft="@+id/imageView3"
++        android:layout_alignStart="@+id/imageView3"
++        android:layout_marginTop="77dp" />
+ 
++    <ListView
++        android:layout_width="150dp"
++        android:id="@+id/inListView"
++        android:focusableInTouchMode="false"
++        android:isScrollContainer="false"
++        android:choiceMode="singleChoice"
++        android:listSelector= "@android:color/holo_blue_bright"
++        android:layout_height="90dp"
++        android:layout_alignTop="@+id/input"
++        android:layout_alignRight="@+id/imageView2"
++        android:layout_alignEnd="@+id/imageView2" />
++
+     <ImageView
+         android:layout_width="50dp"
+         android:layout_height="50dp"
+         app:srcCompat="@drawable/convert"
+         android:id="@+id/convert"
+-        android:layout_marginRight="17dp"
+-        android:layout_marginEnd="17dp"
++        android:layout_marginTop="16dp"
++        android:onClick="conversion"
++        android:layout_below="@+id/inListView"
++        android:layout_toLeftOf="@+id/imageView4"
++        android:layout_toStartOf="@+id/imageView4" />
++
++    <ListView
++        android:id="@+id/outListView"
++        android:layout_width="150dp"
++        android:focusableInTouchMode="false"
++        android:isScrollContainer="false"
++        android:choiceMode="singleChoice"
++        android:listSelector= "@android:color/holo_blue_bright"
++        android:layout_height="90dp"
++        android:layout_marginTop="30dp"
++        android:layout_below="@+id/convert"
++        android:layout_alignLeft="@+id/inListView"
++        android:layout_alignStart="@+id/inListView" />
++
++    <TextView
++        android:text="To"
++        android:id="@+id/outPut"
++        android:layout_width="150dp"
++        android:textSize="18sp"
++        android:layout_height="45dp"
+         android:layout_alignTop="@+id/outListView"
+-        android:layout_alignRight="@+id/input"
+-        android:layout_alignEnd="@+id/input"
+-        android:layout_marginTop="19dp"
+-        android:onClick="conversion"/>
++        android:layout_alignLeft="@+id/input"
++        android:layout_alignStart="@+id/input" />
+ 
+-    <ImageView
+-        android:layout_width="40dp"
+-        android:layout_height="40dp"
+-        app:srcCompat="@android:drawable/ic_menu_sort_by_size"
+-        android:id="@+id/showInListView"
+-        android:onClick="openInListView"
+-        android:layout_alignBottom="@+id/input"
+-        android:layout_toRightOf="@+id/input"
+-        android:layout_toEndOf="@+id/input" />
++    <TextView
++        android:id="@+id/temp"
++        android:textSize="18sp"
++        android:background="@color/colorAccent"
++        android:layout_width="58dp"
++        android:layout_alignBaseline="@+id/mass"
++        android:layout_alignBottom="@+id/mass"
++        android:layout_toRightOf="@+id/imageView5"
++        android:layout_toEndOf="@+id/imageView5"
++        android:layout_height="5dp" />
++
++    <TextView
++        android:id="@+id/vol"
++        android:textSize="18sp"
++        android:background="@color/colorAccent"
++        android:layout_width="58dp"
++        android:layout_alignBaseline="@+id/temp"
++        android:layout_alignBottom="@+id/temp"
++        android:layout_toRightOf="@+id/temp"
++        android:layout_toEndOf="@+id/temp"
++        android:layout_height="5dp" />
++
++    <TextView
++        android:id="@+id/len"
++        android:textSize="18sp"
++        android:background="@color/colorAccent"
++        android:layout_width="58dp"
++        android:layout_below="@+id/imageView3"
++        android:layout_alignLeft="@+id/imageView3"
++        android:layout_alignStart="@+id/imageView3"
++        android:layout_height="5dp" />
++
++    <TextView
++        android:id="@+id/mass"
++        android:textSize="18sp"
++        android:background="@color/colorAccent"
++        android:layout_width="58dp"
++        android:layout_below="@+id/imageView5"
++        android:layout_alignLeft="@+id/imageView5"
++        android:layout_alignStart="@+id/imageView5"
++        android:layout_height="5dp" />
++
++    <TextView
++        android:id="@+id/cur"
++        android:textSize="18sp"
++        android:background="@color/colorAccent"
++        android:layout_width="58dp"
++        android:layout_below="@+id/imageView2"
++        android:layout_alignLeft="@+id/imageView2"
++        android:layout_alignStart="@+id/imageView2"
++        android:layout_height="5dp" />
++
+ 
+ </RelativeLayout>
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/colors.xml	(date 1486598523000)
++++ app/src/main/res/values/colors.xml	(date 1489114337000)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <resources>
+-    <color name="colorPrimary">#3F51B5</color>
+-    <color name="colorPrimaryDark">#303F9F</color>
+-    <color name="colorAccent">#FF4081</color>
++    <color name="colorPrimary">#12caf9</color>
++    <color name="colorPrimaryDark">#000000</color>
++    <color name="colorAccent">#bd02bff9</color>
+ </resources>
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(date 1486598523000)
++++ app/src/main/AndroidManifest.xml	(date 1489114337000)
+@@ -19,7 +19,11 @@
+ 
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+-        </activity>
++        </activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
++     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
++        <meta-data
++            android:name="com.google.android.gms.version"
++            android:value="@integer/google_play_services_version" />
+     </application>
+ 
+ </manifest>
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(date 1486598523000)
++++ app/build.gradle	(date 1489114337000)
+@@ -29,4 +29,5 @@
+     compile 'com.android.support:appcompat-v7:25.1.0'
+     compile 'com.android.support:design:25.1.0'
+     testCompile 'junit:junit:4.12'
++    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+ }
