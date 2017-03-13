@@ -38,7 +38,7 @@ public class Volume {
 
     public double cfTomili(double cf){
 
-        mili = (cf/28316.8);
+        mili = (28316.8/cf);
 
         return mili;
 
