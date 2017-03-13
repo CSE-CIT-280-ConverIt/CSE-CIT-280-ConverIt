@@ -5,7 +5,7 @@ package com.cse280.adriansandoval.converit;
  */
 
 public class Currency {
-    // A string array that stores currency types to be loaded to the listview
+
 
     double usdToJpy;
     double gbpToUsd;

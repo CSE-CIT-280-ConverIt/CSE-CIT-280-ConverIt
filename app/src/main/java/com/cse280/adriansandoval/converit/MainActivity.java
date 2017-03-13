@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -135,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
 
         // create an instance of the parsing class
         new parseRates().execute();
+
+
     }
 
 
@@ -649,40 +652,42 @@ public class MainActivity extends AppCompatActivity {
             try {
                 doc = Jsoup.connect("http://webrates.truefx.com/rates/connect.html?f=html").get();
 
+                // sends the value to a method to check if it contains spaces and removes spaces if they exist
+                getRate  = doc.text();
+                usdToJPY = getRate.substring(95, 102);
+                usdToJPY = removeSpaces(usdToJPY);
+
+                eurToUSD = getRate.substring(22, 26);
+                eurToUSD = removeSpaces(eurToUSD);
+
+                gbpToUSD = getRate.substring(150, 154);
+                gbpToUSD = removeSpaces(gbpToUSD);
+
+                eurToGBP = getRate.substring(214, 218);
+                eurToGBP = removeSpaces(eurToGBP);
+
+                eurToJPY = getRate.substring(342, 350);
+                eurToJPY = removeSpaces(eurToJPY);
+
+
+                gbpToJPY = getRate.substring(598, 606);
+                gbpToJPY = removeSpaces(gbpToJPY);
+
             } catch (NullPointerException npe) {
                 System.out.println(doc.text());
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            // sends the value to a method to check if it contains spaces and removes spaces if they exist
-            getRate = doc.text();
-            usdToJPY = getRate.substring(95, 102);
-            usdToJPY = removeSpaces(usdToJPY);
-
-            eurToUSD = getRate.substring(22, 26);
-            eurToUSD = removeSpaces(eurToUSD);
-
-            gbpToUSD = getRate.substring(150, 154);
-            gbpToUSD = removeSpaces(gbpToUSD);
-
-            eurToGBP = getRate.substring(214, 218);
-            eurToGBP = removeSpaces(eurToGBP);
-
-            eurToJPY = getRate.substring(342, 350);
-            eurToJPY = removeSpaces(eurToJPY);
 
 
-            gbpToJPY = getRate.substring(598, 606);
-            gbpToJPY = removeSpaces(gbpToJPY);
-
-            return null;
+           return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Currency currency = new Currency();
+
             currency.eurToUsd = Double.parseDouble(eurToUSD);
             currency.gbpToUsd = Double.parseDouble(gbpToUSD);
             currency.eurToGbp = Double.parseDouble(eurToGBP);
