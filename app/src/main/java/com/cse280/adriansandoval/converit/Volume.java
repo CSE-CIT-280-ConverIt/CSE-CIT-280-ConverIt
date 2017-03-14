@@ -1,5 +1,8 @@
 package com.cse280.adriansandoval.converit;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 /**
  * Created by AdrianSandoval on 1/25/17.
  */
@@ -14,6 +17,7 @@ public class Volume {
     double mili;
 
     public double cfTocm(double cf){
+
 
         cm = (cf/35.315);
 
@@ -37,8 +41,7 @@ public class Volume {
     }
 
     public double cfTomili(double cf){
-
-        mili = (28316.8/cf);
+        mili = (28316.8 * cf);
 
         return mili;
 

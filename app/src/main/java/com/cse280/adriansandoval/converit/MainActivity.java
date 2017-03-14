@@ -26,6 +26,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import org.jsoup.nodes.Document;
 import org.w3c.dom.*;
 
@@ -41,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     //Volume
     Volume volume = new Volume();
     Currency currency = new Currency();
+    Length length = new Length();
+
     String[] volumeUnits = new String[]{
             "Cubic Feet",
             "Cubic Meter",
@@ -55,6 +62,14 @@ public class MainActivity extends AppCompatActivity {
             "GB Pound",
             "Yen",
             "Canadian Dollar"
+    };
+    // String array for length units
+    String [] lengthUnits = {"Meters",
+            "Kilometers",
+            "Centimeters",
+            "Feet",
+            "Yards",
+            "Miles"
     };
 
     //ImageView
@@ -92,11 +107,16 @@ public class MainActivity extends AppCompatActivity {
 
     //option check
     boolean isVolume = false;
-    boolean isCurrency = false;
+    public boolean isCurrency = false;
     boolean isLength = false;
     boolean isMass = false;
     boolean isTemperature = false;
     boolean isBlinking = false;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @Override
@@ -138,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
         new parseRates().execute();
 
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
 
@@ -225,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         isMass = false;
         isTemperature = false;
         vol.setVisibility(View.VISIBLE);
-        if (isVolume == true) {
+        if (isVolume) {
             blink(vol);
             noBlink(cur);
             noBlink(len);
@@ -247,22 +270,55 @@ public class MainActivity extends AppCompatActivity {
 
     public void setCurrencyListView(View view) {
         isCurrency = true;
-        if (isCurrency == true) {
+        if (isCurrency) {
             blink(cur);
             noBlink(vol);
+            noBlink(len);
+            noBlink(mass);
+            noBlink(temp);
         }
 
         isVolume = false;
         isLength = false;
         isMass = false;
         isTemperature = false;
-        // currencyConversion();
+
         cur.setVisibility(View.VISIBLE);
         len.setVisibility(View.INVISIBLE);
         mass.setVisibility(View.INVISIBLE);
         temp.setVisibility(View.INVISIBLE);
         vol.setVisibility(View.INVISIBLE);
+
         setListView(currencyTypes);
+
+    }
+
+
+    // OnClick listener for length image button
+
+    public void setLengthListView(View view) {
+
+        isLength = true;
+        isVolume = false;
+        isCurrency = false;
+
+        isMass = false;
+        isTemperature = false;
+        len.setVisibility(View.VISIBLE);
+        if (isLength) {
+            blink(len);
+            noBlink(cur);
+            noBlink(vol);
+            noBlink(mass);
+            noBlink(temp);
+        } else noBlink(len);
+
+        vol.setVisibility(View.INVISIBLE);
+        mass.setVisibility(View.INVISIBLE);
+        temp.setVisibility(View.INVISIBLE);
+        cur.setVisibility(View.INVISIBLE);
+
+        setListView(lengthUnits);
 
     }
 
@@ -318,9 +374,13 @@ public class MainActivity extends AppCompatActivity {
                 //isTemperature = false;
                 VolumeConvert();
             }
-            if(isCurrency){
+            if (isCurrency == true) {
                 currencyConversion();
             }
+            if (isLength == true){
+                lengthConversion();
+            }
+
 
 
         } else if (!digitsOnly) {
@@ -391,7 +451,8 @@ public class MainActivity extends AppCompatActivity {
 
                 inValue = volume.mili;
 
-                outValue = String.format("%.3f mL", inValue);
+               // outValue = String.format("%.3f mL", inValue);
+                outValue = String.format( inValue + " mL");
                 output.setText(outValue);
 
             } else if (inUnit == volumeUnits[1].toString() && outUnit == volumeUnits[0].toString()) {
@@ -633,8 +694,505 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void lengthConversion() {
+        boolean digitsOnly = TextUtils.isDigitsOnly(input.getText());
 
-// A method that will extract the rates from the webpage
+        try {
+
+            if (inUnit == lengthUnits[0].toString() && outUnit == lengthUnits[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.metersToMeters(inValue);
+
+                inValue = length.meters;
+
+                outValue = String.format("%.3f", inValue);
+
+
+                output.setText(outValue);
+            } else if (inUnit == lengthUnits[0].toString() && outUnit == lengthUnits[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.metersToKilometers(inValue);
+
+                inValue = length.kilometers;
+
+                outValue = String.format("%.3f", inValue);
+
+
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[0].toString() && outUnit == lengthUnits[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.metersToCentimeters(inValue);
+
+                inValue = length.centimeters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[0].toString() && outUnit == lengthUnits[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.metersToFeet(inValue);
+
+                inValue = length.feet;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[0].toString() && outUnit == lengthUnits[4].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.metersToYards(inValue);
+
+                inValue = length.yards;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[0].toString() && outUnit == lengthUnits[5].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.metersToMiles(inValue);
+
+                inValue = length.miles;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[1].toString() && outUnit == lengthUnits[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.kilometersToMeters(inValue);
+
+                inValue = length.meters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[1].toString() && outUnit == lengthUnits[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.kilometersToKilometers(inValue);
+
+                inValue = length.kilometers;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[1].toString() && outUnit == lengthUnits[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.kilometersToCentimeters(inValue);
+
+                inValue = length.centimeters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[1].toString() && outUnit == lengthUnits[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.kilometersToFeet(inValue);
+
+                inValue = length.feet;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[1].toString() && outUnit == lengthUnits[4].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.kilometersToYards(inValue);
+
+                inValue = length.yards;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[1].toString() && outUnit == lengthUnits[5].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.kilometersToMiles(inValue);
+
+                inValue = length.miles;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[2].toString() && outUnit == lengthUnits[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.centimetersToMeters(inValue);
+
+                inValue = length.meters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[2].toString() && outUnit == lengthUnits[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.centimetersToKilometers(inValue);
+
+                inValue = length.kilometers;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[2].toString() && outUnit == lengthUnits[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.centimetersToCentimeters(inValue);
+
+                inValue = length.centimeters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[2].toString() && outUnit == lengthUnits[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.centimetersToFeet(inValue);
+
+                inValue = length.feet;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[2].toString() && outUnit == lengthUnits[4].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.centimetersToYards(inValue);
+
+                inValue = length.yards;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[2].toString() && outUnit == lengthUnits[5].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.centimetersToMiles(inValue);
+
+                inValue = length.miles;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[3].toString() && outUnit == lengthUnits[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.feetToMeters(inValue);
+
+                inValue = length.meters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[3].toString() && outUnit == lengthUnits[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.feetToKilometers(inValue);
+
+                inValue = length.kilometers;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[3].toString() && outUnit == lengthUnits[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.feetToCentimeters(inValue);
+
+                inValue = length.centimeters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[3].toString() && outUnit == lengthUnits[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.feetToFeet(inValue);
+
+                inValue = length.feet;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[3].toString() && outUnit == lengthUnits[4].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.feetToYards(inValue);
+
+                inValue = length.yards;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[3].toString() && outUnit == lengthUnits[5].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.feetToMiles(inValue);
+
+                inValue = length.miles;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[4].toString() && outUnit == lengthUnits[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.yardsToMeters(inValue);
+
+                inValue = length.meters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[4].toString() && outUnit == lengthUnits[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.yardsToKilometers(inValue);
+
+                inValue = length.kilometers;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[4].toString() && outUnit == lengthUnits[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.yardsToCentimeters(inValue);
+
+                inValue = length.centimeters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[4].toString() && outUnit == lengthUnits[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.yardsToFeet(inValue);
+
+                inValue = length.feet;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[4].toString() && outUnit == lengthUnits[4].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.yardsToYards(inValue);
+
+                inValue = length.yards;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[4].toString() && outUnit == lengthUnits[5].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.yardsToMiles(inValue);
+
+                inValue = length.miles;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[5].toString() && outUnit == lengthUnits[0].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.milesToMeters(inValue);
+
+                inValue = length.meters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[5].toString() && outUnit == lengthUnits[1].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.milesToKilometers(inValue);
+
+                inValue = length.kilometers;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[5].toString() && outUnit == lengthUnits[2].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.milesToCentimeters(inValue);
+
+                inValue = length.centimeters;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[5].toString() && outUnit == lengthUnits[3].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.milesToFeet(inValue);
+
+                inValue = length.feet;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[5].toString() && outUnit == lengthUnits[4].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.milesToYards(inValue);
+
+                inValue = length.yards;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == lengthUnits[5].toString() && outUnit == lengthUnits[5].toString()) {
+                outValue = input.getText().toString();
+
+                inValue = Double.parseDouble(outValue);
+
+                length.milesToMiles(inValue);
+
+                inValue = length.miles;
+
+                outValue = String.format("%.3f", inValue);
+                output.setText(outValue);
+
+            } else if (inUnit == null) {
+                Toast.makeText(this, "Choose \"From\" Conversion", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (outUnit == null) {
+                 Toast.makeText(this, "Choose \"To\" Conversion", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                Toast.makeText(this, "Choose A Unit Of Conversion", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (NumberFormatException ex) {
+
+        Toast.makeText(this, "Please enter a value to convert", Toast.LENGTH_SHORT).show();
+        return;
+
+        }
+    }
+
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
+
+
+
+
+    // A method that will extract the rates from the webpage
     public class parseRates extends AsyncTask<Void, Void, Void> {
         String getRate;
         String eurToUSD;
@@ -644,44 +1202,48 @@ public class MainActivity extends AppCompatActivity {
         String usdToJPY;
         String gbpToJPY;
 
+
+
         @Override
         protected Void doInBackground(Void... params) {
             Document doc = null;
 
 
-            try {
-                doc = Jsoup.connect("http://webrates.truefx.com/rates/connect.html?f=html").get();
+                try {
+                    doc = Jsoup.connect("http://webrates.truefx.com/rates/connect.html?f=html").get();
 
-                // sends the value to a method to check if it contains spaces and removes spaces if they exist
-                getRate  = doc.text();
-                usdToJPY = getRate.substring(95, 102);
-                usdToJPY = removeSpaces(usdToJPY);
+                    // sends the value to a method to check if it contains spaces and removes spaces if they exist
+                    getRate = doc.text();
+                    usdToJPY = getRate.substring(95, 102);
+                    usdToJPY = removeSpaces(usdToJPY);
 
-                eurToUSD = getRate.substring(22, 26);
-                eurToUSD = removeSpaces(eurToUSD);
+                    eurToUSD = getRate.substring(22, 26);
+                    eurToUSD = removeSpaces(eurToUSD);
 
-                gbpToUSD = getRate.substring(150, 154);
-                gbpToUSD = removeSpaces(gbpToUSD);
+                    gbpToUSD = getRate.substring(150, 154);
+                    gbpToUSD = removeSpaces(gbpToUSD);
 
-                eurToGBP = getRate.substring(214, 218);
-                eurToGBP = removeSpaces(eurToGBP);
+                    eurToGBP = getRate.substring(214, 218);
+                    eurToGBP = removeSpaces(eurToGBP);
 
-                eurToJPY = getRate.substring(342, 350);
-                eurToJPY = removeSpaces(eurToJPY);
-
-
-                gbpToJPY = getRate.substring(598, 606);
-                gbpToJPY = removeSpaces(gbpToJPY);
-
-            } catch (NullPointerException npe) {
-                System.out.println(doc.text());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                    eurToJPY = getRate.substring(342, 350);
+                    eurToJPY = removeSpaces(eurToJPY);
 
 
+                    gbpToJPY = getRate.substring(598, 606);
+                    gbpToJPY = removeSpaces(gbpToJPY);
 
-           return null;
+                } catch (NullPointerException npe) {
+                    System.out.println(doc.text());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+
+            return null;
         }
 
         @Override
@@ -712,6 +1274,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
     public void currencyConversion() {
 
         // CURRENCY CONVERSION IF STATEMENTS
