@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     Volume volume = new Volume();
     Currency currency = new Currency();
     Length length = new Length();
+    Mass mass2 = new Mass();
 
     String[] volumeUnits = new String[]{
             "Cubic Feet",
@@ -71,7 +72,14 @@ public class MainActivity extends AppCompatActivity {
             "Yards",
             "Miles"
     };
-
+    //String array for mass units
+    String[] massUnits= new String[]{
+            "Kilogram",
+            "Gram",
+            "USTon",
+            "Pound",
+            "Ounce",
+    };
     //ImageView
     ImageView VolumeImageView;
     ImageView showInImageView;
@@ -322,6 +330,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void setMassListView(View view) {
+        isMass = true;
+        isVolume = false;
+        isCurrency = false;
+        isLength = false;
+        isTemperature = false;
+        mass.setVisibility(View.VISIBLE);
+        if (isMass) {
+            blink(mass);
+            noBlink(vol);
+            noBlink(len);
+            noBlink(cur);
+            noBlink(temp);
+        }else noBlink(mass);
+
+
+        len.setVisibility(View.INVISIBLE);
+        cur.setVisibility(View.INVISIBLE);
+        temp.setVisibility(View.INVISIBLE);
+        vol.setVisibility(View.INVISIBLE);
+
+        setListView(massUnits);
+
+    }
+
     public void openInListView(View view) {
 
         inListView.setVisibility(View.VISIBLE);
@@ -379,6 +412,9 @@ public class MainActivity extends AppCompatActivity {
             }
             if (isLength == true){
                 lengthConversion();
+            }
+            if (isMass == true){
+                massConversion();
             }
 
 
@@ -1152,6 +1188,237 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter a value to convert", Toast.LENGTH_SHORT).show();
             return;
 
+        }
+    }
+
+    //Mass Conversion If Statements
+
+
+
+
+    public void massConversion() {
+        boolean digitsOnly = TextUtils.isDigitsOnly(input.getText());
+        try {
+            //Kilograms to Grams
+            if (inUnit == massUnits[0].toString() && outUnit == massUnits[1].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.kgTogr(inValue);
+                inValue = mass2.gr;
+                outValue = String.format("%.0f g", inValue);
+                output.setText(outValue);
+            }
+            //Kilograms to US Tons
+            else if (inUnit == massUnits[0].toString() && outUnit == massUnits[2].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.kgTousTon(inValue);
+                inValue = mass2.usTon;
+                outValue = String.format("%.5f ton(s)", inValue);
+                output.setText(outValue);
+            }
+            //Kilograms to Pounds
+            else if (inUnit == massUnits[0].toString() && outUnit == massUnits[3].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.kgTolb(inValue);
+                inValue = mass2.lb;
+                outValue = String.format("%.2f lb", inValue);
+                output.setText(outValue);
+            }
+            //Kilograms to Ounces
+            else if (inUnit == massUnits[0].toString() && outUnit == massUnits[4].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.kgTooz(inValue);
+                inValue = mass2.oz;
+                outValue = String.format("%.2f oz", inValue);
+                output.setText(outValue);
+            }
+            //Kilograms to Kilograms
+            else if (inUnit == massUnits[0].toString() && outUnit == massUnits[0].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                outValue = String.format("%.0f kg", inValue);
+                output.setText(outValue);
+            }
+            //Grams to Kilograms
+            else if (inUnit == massUnits[1].toString() && outUnit == massUnits[0].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.grTokg(inValue);
+                inValue = mass2.kg;
+                outValue = String.format("%.3f kg", inValue);
+                output.setText(outValue);
+            }
+            //Grams to US Tons
+            else if (inUnit == massUnits[1].toString() && outUnit == massUnits[2].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.grTousTon(inValue);
+                inValue = mass2.usTon;
+                outValue = String.format("%.5f ton(s)", inValue);
+                output.setText(outValue);
+            }
+            //Grams to Pounds
+            else if (inUnit == massUnits[1].toString() && outUnit == massUnits[3].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.grTolb(inValue);
+                inValue = mass2.lb;
+                outValue = String.format("%.3f lb", inValue);
+                output.setText(outValue);
+            }
+            //Grams to Ounces
+            else if (inUnit == massUnits[1].toString() && outUnit == massUnits[4].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.grTooz(inValue);
+                inValue = mass2.oz;
+                outValue = String.format("%.3f oz", inValue);
+                output.setText(outValue);
+            }
+            //Grams to Grams
+            else if (inUnit == massUnits[1].toString() && outUnit == massUnits[1].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                outValue = String.format("%.0f g", inValue);
+                output.setText(outValue);
+            }
+            //US Tons to Kilograms
+            else if (inUnit == massUnits[2].toString() && outUnit == massUnits[0].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.usTonTokg(inValue);
+                inValue = mass2.kg;
+                outValue = String.format("%.2f kg", inValue);
+                output.setText(outValue);
+            }
+            //US Tons to Grams
+            else if (inUnit == massUnits[2].toString() && outUnit == massUnits[1].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.usTonTogr(inValue);
+                inValue = mass2.gr;
+                outValue = String.format("%.0f g", inValue);
+                output.setText(outValue);
+            }
+            //US Tons to Pounds
+            else if (inUnit == massUnits[2].toString() && outUnit == massUnits[3].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.usTonTolb(inValue);
+                inValue = mass2.lb;
+                outValue = String.format("%.0f lb", inValue);
+                output.setText(outValue);
+            }
+            //US Tons to Ounces
+            else if (inUnit == massUnits[2].toString() && outUnit == massUnits[4].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.usTonTooz(inValue);
+                inValue = mass2.oz;
+                outValue = String.format("%.0f oz", inValue);
+                output.setText(outValue);
+            }
+            //US Tons to US Tons
+            else if (inUnit == massUnits[2].toString() && outUnit == massUnits[2].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                outValue = String.format("%.0f ton(s)", inValue);
+                output.setText(outValue);
+            }
+
+            //Pounds to Kilograms
+            else if (inUnit == massUnits[3].toString() && outUnit == massUnits[0].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.lbTokg(inValue);
+                inValue = mass2.kg;
+                outValue = String.format("%.2f kg", inValue);
+                output.setText(outValue);
+            }
+            //Pounds to Grams
+            else if (inUnit == massUnits[3].toString() && outUnit == massUnits[1].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.lbTogr(inValue);
+                inValue = mass2.gr;
+                outValue = String.format("%.3f g", inValue);
+                output.setText(outValue);
+            }
+            //Pounds to US Tons
+            else if (inUnit == massUnits[3].toString() && outUnit == massUnits[2].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.lbTousTon(inValue);
+                inValue = mass2.usTon;
+                outValue = String.format("%.5f ton(s)", inValue);
+                output.setText(outValue);
+            }
+            //Pounds to Ounces
+            else if (inUnit == massUnits[3].toString() && outUnit == massUnits[4].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.lbTooz(inValue);
+                inValue = mass2.oz;
+                outValue = String.format("%.0f oz", inValue);
+                output.setText(outValue);
+            }
+            //Pounds to Pounds
+            else if (inUnit == massUnits[3].toString() && outUnit == massUnits[3].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                outValue = String.format("%.0f lb", inValue);
+                output.setText(outValue);
+            }
+
+            //Ounces to Kilograms
+            else if (inUnit == massUnits[4].toString() && outUnit == massUnits[0].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.ozTokg(inValue);
+                inValue = mass2.kg;
+                outValue = String.format("%.5f kg", inValue);
+                output.setText(outValue);
+            }
+            //Ounces to Grams
+            else if (inUnit == massUnits[4].toString() && outUnit == massUnits[1].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.ozTogr(inValue);
+                inValue = mass2.gr;
+                outValue = String.format("%.3f g", inValue);
+                output.setText(outValue);
+            }
+            //Ounces to US Tons
+            else if (inUnit == massUnits[4].toString() && outUnit == massUnits[2].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.ozTousTon(inValue);
+                inValue = mass2.usTon;
+                outValue = String.format("%.5f ton(s)", inValue);
+                output.setText(outValue);
+            }
+            //Ounces to Pounds
+            else if (inUnit == massUnits[4].toString() && outUnit == massUnits[3].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                mass2.ozTolb(inValue);
+                inValue = mass2.lb;
+                outValue = String.format("%.2f lb", inValue);
+                output.setText(outValue);
+            }
+            //Ounces to Ounces
+            else if (inUnit == massUnits[4].toString() && outUnit == massUnits[4].toString()) {
+                outValue = input.getText().toString();
+                inValue = Double.parseDouble(outValue);
+                outValue = String.format("%.0f oz", inValue);
+                output.setText(outValue);
+            }
+        }
+        catch (Exception e) {
+            output.setText("Enter Input Value");
         }
     }
 

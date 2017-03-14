@@ -55,6 +55,7 @@
         app:srcCompat="@drawable/mass"
         android:id="@+id/imageView5"
         android:layout_width="58dp"
+        android:onClick="setMassListView"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/imageView4"
         android:layout_toStartOf="@+id/imageView4" />
