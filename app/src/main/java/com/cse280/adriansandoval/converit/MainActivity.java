@@ -1138,16 +1138,19 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Choose \"From\" Conversion", Toast.LENGTH_SHORT).show();
                 return;
             } else if (outUnit == null) {
-                 Toast.makeText(this, "Choose \"To\" Conversion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Choose \"To\" Conversion", Toast.LENGTH_SHORT).show();
                 return;
+
             } else {
                 Toast.makeText(this, "Choose A Unit Of Conversion", Toast.LENGTH_SHORT).show();
                 return;
+
+
             }
         } catch (NumberFormatException ex) {
 
-        Toast.makeText(this, "Please enter a value to convert", Toast.LENGTH_SHORT).show();
-        return;
+            Toast.makeText(this, "Please enter a value to convert", Toast.LENGTH_SHORT).show();
+            return;
 
         }
     }
