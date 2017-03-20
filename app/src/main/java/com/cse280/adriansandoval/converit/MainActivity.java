@@ -61,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
     String[] currencyTypes = {"Us Dollar",
             "Euro",
             "GB Pound",
-            "Yen",
-            "Canadian Dollar"
+            "Yen"
     };
     // String array for length units
     String [] lengthUnits = {"Meters",
@@ -379,12 +378,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void conversion(View view) {
 
-        boolean digitsOnly = TextUtils.isDigitsOnly(input.getText());
+       // boolean digitsOnly = TextUtils.isDigitsOnly(input.getText());
 
         if (noSelection()) {
             Toast.makeText(this, "Choose Conversion Type", Toast.LENGTH_SHORT).show();
             return;
-        } else if (digitsOnly) {
+        } else {
 
             RotateAnimation anim = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             anim.setInterpolator(new LinearInterpolator());
@@ -419,10 +418,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        } else if (!digitsOnly) {
-            Toast.makeText(this, "YOU MUST ENTER DIGITS ONLY!", Toast.LENGTH_SHORT).show();
-            return;
-
         }
 
 
@@ -430,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void VolumeConvert() {
-        boolean digitsOnly = TextUtils.isDigitsOnly(input.getText());
+        //boolean digitsOnly = TextUtils.isDigitsOnly(input.getText());
 
         try {
             if (inUnit == volumeUnits[0].toString() && outUnit == volumeUnits[0].toString()) {
@@ -715,8 +710,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
 
             } else {
-                Toast.makeText(this, "Choose A Unit Of Conversion", Toast.LENGTH_SHORT).show();
-                return;
+                if(isVolume == false){
+                    Toast.makeText(this, "Choose A Unit Of Conversion", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
 
 
             }

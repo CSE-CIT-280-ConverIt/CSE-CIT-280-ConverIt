@@ -69,7 +69,7 @@
         android:layout_centerHorizontal="true" />
 
     <EditText
-        android:inputType="textPersonName"
+        android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/input"
         android:hint="From"
