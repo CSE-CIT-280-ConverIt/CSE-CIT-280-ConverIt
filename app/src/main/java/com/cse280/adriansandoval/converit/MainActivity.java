@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     Currency currency = new Currency();
     Length length = new Length();
     Mass mass2 = new Mass();
+    Temperature temperature = new Temperature();
 
     String[] volumeUnits = new String[]{
             "Cubic Feet",
@@ -78,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
             "USTon",
             "Pound",
             "Ounce",
+    };
+    //String array for Temperature units
+    String[] tempUnits= new String[]{
+        "Farenheit", //0
+        "Celcius", //1
+        "Kelvin",//2
     };
     //ImageView
     ImageView VolumeImageView;
@@ -353,6 +360,32 @@ public class MainActivity extends AppCompatActivity {
         setListView(massUnits);
 
     }
+    
+    public void setTemperatureListView(View view) {
+        isMass = false;
+        isVolume = false;
+        isCurrency = false;
+        isLength = false;
+        isTemperature = true;
+        temp.setVisibility(View.VISIBLE);
+
+        if (isTemperature) {
+        blink(temp);
+        noBlink(vol);
+        noBlink(len);
+        noBlink(cur);
+        noBlink(mass);
+        }else noBlink(temp);
+
+        len.setVisibility(View.INVISIBLE);
+        cur.setVisibility(View.INVISIBLE);
+        mass.setVisibility(View.INVISIBLE);
+        vol.setVisibility(View.INVISIBLE);
+        
+        setListView(tempUnits);
+        }
+    }
+
 
     public void openInListView(View view) {
 
@@ -415,8 +448,9 @@ public class MainActivity extends AppCompatActivity {
             if (isMass == true){
                 massConversion();
             }
-
-
+            if(isTemperature == true){
+                temperatrueConversion();
+            }
 
         }
 
@@ -1824,6 +1858,65 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             output.setText("Enter Input Value");
         }
+        
+        
+        public void temperatureConversion(){
+        boolean digitsOnly=TextUtils.isDigitsOnly(input.getText());
+        try{
+        //Farenheit to Celcius
+        if(inUnit==tempUnits[0].toString()&&outUnit==tempUnits[1].toString()){
+        outValue=input.getText().toString();
+        inValue=Double.parseDouble(outValue);
+        temperature.FtoC(inValue);
+        inValue=temperature.f;
+        output.setText(outValue);
+        }
+        //Farenheit to Kelvin
+        else if(inUnit==tempUnits[0].toString()&&outUnit==tempUnits[2].toString()){
+        outValue=input.getText().toString();
+        inValue=Double.parseDouble(outValue);
+        temperature.FtoK(inValue);
+        inValue=temperature.f;
+        output.setText(outValue);
+        }
+        //Celcius to Farenheit
+        else if(inUnit==tempUnits[1].toString()&&outUnit==tempUnits[0].toString()){
+        outValue=input.getText().toString();
+        inValue=Double.parseDouble(outValue);
+        temperature.CtoF(inValue);
+        inValue=temperature.c;
+        output.setText(outValue);
+        }
+        //Celcius to Kelvin
+        else if(inUnit==tempUnits[1].toString()&&outUnit==tempUnits[2].toString()){
+        outValue=input.getText().toString();
+        inValue=Double.parseDouble(outValue);
+        temperature.CtoK(inValue);
+        inValue=temperature.c;
+        output.setText(outValue);
+        }
+        //Kelvin to Farenheit
+        else if(inUnit==tempUnits[2].toString()&&outUnit==tempUnits[0].toString()){
+        outValue=input.getText().toString();
+        inValue=Double.parseDouble(outValue);
+        temperature.KtoF(inValue);
+        inValue=temperature.k;
+        output.setText(outValue);
+        }
+        //Kelvin to Celcius
+        else if(inUnit==tempUnits[2].toString()&&outUnit==tempUnits[1].toString()){
+        outValue=input.getText().toString();
+        inValue=Double.parseDouble(outValue);
+        temperature.KtoC(inValue);
+        inValue=temperature.k;
+        output.setText(outValue);
+        }
+        catch(Exception e){
+        output.setText("Enter Input Value");
+        }
+        }
+
+
 
 
     }
